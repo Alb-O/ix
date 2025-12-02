@@ -1,6 +1,11 @@
 # VM configuration for testing with QEMU
 # Run with: nix run .#vm
-{ inputs, lib, modulesPath, ... }:
+{
+  inputs,
+  lib,
+  modulesPath,
+  ...
+}:
 let
   imp = inputs.imp.withLib lib;
 in

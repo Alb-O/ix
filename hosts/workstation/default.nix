@@ -1,5 +1,10 @@
 # Workstation host configuration
-{ inputs, lib, modulesPath, ... }:
+{
+  inputs,
+  lib,
+  modulesPath,
+  ...
+}:
 let
   imp = inputs.imp.withLib lib;
 in

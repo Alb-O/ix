@@ -1,3 +1,2 @@
 # Server hostname
-{ ... }:
-"server"
+{ ... }: "server"

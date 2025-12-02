@@ -1,3 +1,2 @@
 # time/timeZone.nix -> time.timeZone
-{ ... }:
-"America/New_York"
+{ ... }: "America/New_York"

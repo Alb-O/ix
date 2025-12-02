@@ -1,3 +1,2 @@
 # VM hostname
-{ ... }:
-"ix-vm"
+{ ... }: "ix-vm"

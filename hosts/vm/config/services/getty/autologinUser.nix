@@ -1,3 +1,2 @@
 # Auto-login for convenience
-{ ... }:
-"alice"
+{ ... }: "alice"

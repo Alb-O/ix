@@ -1,6 +1,7 @@
 # System packages for testing
 { pkgs, ... }:
-with pkgs; [
+with pkgs;
+[
   vim
   htop
   tree

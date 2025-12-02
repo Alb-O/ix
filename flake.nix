@@ -10,6 +10,8 @@
     };
 
     imp.url = "github:Alb-O/imp";
+    flake-utils.url = "github:numtide/flake-utils";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
   };
 
   outputs =
@@ -18,32 +20,12 @@
       nixpkgs,
       home-manager,
       imp,
+      flake-utils,
+      treefmt-nix,
       ...
     }@inputs:
     let
       lib = nixpkgs.lib;
-
-      # Supported systems for per-system outputs
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "x86_64-darwin"
-        "aarch64-darwin"
-      ];
-
-      # Helper to generate per-system attrs
-      forAllSystems = f: lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
-
-      # Build per-system outputs using imp.treeWith
-      perSystemOutputs = forAllSystems (
-        pkgs:
-        imp.treeWith lib (f: f { inherit self pkgs inputs; }) ./outputs
-      );
-
-      # Merge per-system outputs into flake structure
-      mergePerSystem =
-        attr:
-        lib.genAttrs systems (system: perSystemOutputs.${system}.${attr} or { });
     in
     {
       # NixOS configurations - each host imports modules via imp
@@ -127,11 +109,6 @@
         };
       };
 
-      # Per-system outputs loaded via imp.treeWith
-      packages = mergePerSystem "packages";
-      devShells = mergePerSystem "devShells";
-      apps = mergePerSystem "apps";
-
       # NixOS modules exposed for external use
       nixosModules = {
         default = imp ./modules/nixos;
@@ -142,10 +119,41 @@
       homeModules = {
         default = imp ./modules/home;
       };
-
-      # Overlay combining all packages
+    }
+    # Per-system outputs using flake-utils
+    // flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+        args = {
+          inherit
+            self
+            pkgs
+            inputs
+            treefmt-nix
+            ;
+        };
+        # Use imp.treeWith to load per-system outputs from ./outputs
+        outputs = imp.treeWith lib (f: f args) ./outputs;
+      in
+      outputs
+    )
+    // {
+      # Overlay combining all packages (system-independent)
       overlays.default = final: prev: {
-        ix = perSystemOutputs.${prev.system}.packages or { };
+        ix =
+          let
+            pkgs = nixpkgs.legacyPackages.${prev.system};
+            args = {
+              inherit
+                self
+                pkgs
+                inputs
+                treefmt-nix
+                ;
+            };
+          in
+          (imp.treeWith lib (f: f args) ./outputs).packages or { };
       };
     };
 }

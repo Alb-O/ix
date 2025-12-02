@@ -5,7 +5,12 @@
 #   config/programs/git.nix      -> programs.git = { ... }
 #   config/services/syncthing.nix -> services.syncthing = { ... }
 #
-{ inputs, lib, pkgs, ... }:
+{
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
 let
   imp = inputs.imp.withLib lib;
 in
