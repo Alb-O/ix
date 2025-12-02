@@ -8,16 +8,16 @@
 }:
 lib.nixosSystem {
   system = "x86_64-linux";
-  specialArgs = { inherit inputs; };
+  specialArgs = { inherit inputs imp; };
   modules = [
-    ((imp.withLib lib).filterNot (lib.hasInfix "/config/") ../../hosts/vm)
+    (imp.filterNot (lib.hasInfix "/config/") ../../hosts/vm)
     (imp ../../modules/nixos)
     home-manager.nixosModules.home-manager
     {
       home-manager = {
         useGlobalPkgs = true;
         useUserPackages = true;
-        extraSpecialArgs = { inherit inputs; };
+        extraSpecialArgs = { inherit inputs imp; };
         users.alice = import ../../home/alice;
       };
     }

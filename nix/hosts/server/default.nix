@@ -1,7 +1,4 @@
-{ inputs, lib, ... }:
-let
-  imp = inputs.imp.withLib lib;
-in
+{ imp, ... }:
 {
   imports = [ (imp.configTree ./config) ];
 

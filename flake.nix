@@ -26,20 +26,21 @@
     }@inputs:
     let
       lib = nixpkgs.lib;
+      impLib = imp.withLib lib;
     in
-    (imp.withLib lib).flakeOutputs {
+    impLib.flakeOutputs {
       systems = flake-utils.lib.defaultSystems;
       pkgsFor = system: nixpkgs.legacyPackages.${system};
       args = {
         inherit
           self
           inputs
-          imp
           lib
           nixpkgs
           home-manager
           treefmt-nix
           ;
+        imp = impLib;
       };
     } ./nix/outputs
     // {

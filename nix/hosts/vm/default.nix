@@ -1,13 +1,9 @@
 # Run with: nix run .#apps.x86_64-linux.vm
 {
-  inputs,
-  lib,
+  imp,
   modulesPath,
   ...
 }:
-let
-  imp = inputs.imp.withLib lib;
-in
 {
   imports = [
     (modulesPath + "/virtualisation/qemu-vm.nix")

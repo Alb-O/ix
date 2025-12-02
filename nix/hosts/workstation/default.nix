@@ -1,12 +1,8 @@
 {
-  inputs,
-  lib,
+  imp,
   modulesPath,
   ...
 }:
-let
-  imp = inputs.imp.withLib lib;
-in
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
