@@ -41,15 +41,15 @@
           treefmt-nix
           ;
       };
-    } ./outputs
+    } ./nix/outputs
     // {
       nixosModules = {
-        default = imp ./modules/nixos;
-        profiles = imp ./modules/profiles;
+        default = imp ./nix/modules/nixos;
+        profiles = imp ./nix/modules/profiles;
       };
 
       homeModules = {
-        default = imp ./modules/home;
+        default = imp ./nix/modules/home;
       };
 
       overlays.default = final: prev: {
