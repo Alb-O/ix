@@ -9,11 +9,11 @@
 lib.nixosSystem {
   system = "x86_64-linux";
   specialArgs = { inherit inputs imp registry; };
-  modules = [
-    (imp.filterNot (lib.hasInfix "/config/") registry.hosts.server)
-    (import registry.modules.nixos.base)
-    (import registry.modules.nixos.features.hardening)
-    (import registry.modules.nixos.features.webserver)
-    (import registry.modules.nixos.features.database)
+  modules = imp.imports [
+    registry.hosts.server
+    registry.modules.nixos.base
+    registry.modules.nixos.features.hardening
+    registry.modules.nixos.features.webserver
+    registry.modules.nixos.features.database
   ];
 }

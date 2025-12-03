@@ -17,10 +17,10 @@
     lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs imp registry; };
-      modules = [
-        (imp.filterNot (lib.hasInfix "/config/") registry.hosts.vm)
-        (import registry.modules.nixos.base)
-        (import registry.modules.nixos.features.desktop)
+      modules = imp.imports [
+        registry.hosts.vm
+        registry.modules.nixos.base
+        registry.modules.nixos.features.desktop
         inputs.home-manager.nixosModules.home-manager
         {
           home-manager = {
