@@ -1,3 +1,5 @@
+# Webserver feature
+# Nginx with recommended settings and firewall configuration
 { ... }:
 {
   services.nginx = {

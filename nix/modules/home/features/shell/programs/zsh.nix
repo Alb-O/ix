@@ -1,3 +1,4 @@
+# Shell feature - zsh configuration
 { ... }:
 {
   enable = true;
@@ -21,7 +22,6 @@
   };
 
   initContent = ''
-    # Custom zsh initialization
     bindkey -e  # Emacs keybindings
   '';
 }

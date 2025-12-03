@@ -1,3 +1,5 @@
+# Security hardening feature
+# Bundles kernel hardening, sudo config, auditing, and intrusion prevention
 { lib, ... }:
 {
   boot.kernel.sysctl = {

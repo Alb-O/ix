@@ -1,12 +1,9 @@
+# Dev tools feature - git version control
 { ... }:
 {
   enable = true;
 
   settings = {
-    user = {
-      name = "Alice";
-      email = "alice@example.com";
-    };
     init.defaultBranch = "main";
     pull.rebase = true;
     push.autoSetupRemote = true;

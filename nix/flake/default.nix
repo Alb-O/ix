@@ -46,12 +46,13 @@ flake-parts.lib.mkFlake { inherit inputs; } {
 
   flake = {
     nixosModules = {
-      default = imp registry.modules.nixos;
-      profiles = imp registry.modules.profiles;
+      base = import registry.modules.nixos.base;
+      features = imp registry.modules.nixos.features;
     };
 
     homeModules = {
-      default = imp registry.modules.home;
+      base = import registry.modules.home.base;
+      features = imp registry.modules.home.features;
     };
 
     overlays.default = final: prev: {

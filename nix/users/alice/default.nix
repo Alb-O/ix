@@ -1,23 +1,27 @@
 {
   imp,
-  pkgs,
+  registry,
   ...
 }:
 {
-  imports = [ (imp.configTree ./config) ];
+  imports = [
+    # Home features (each feature uses configTree internally)
+    (import registry.modules.home.features.shell)
+    (import registry.modules.home.features.devTools)
+    (import registry.modules.home.features.modernUnix)
+    (import registry.modules.home.features.sync)
+  ];
+
+  # User-specific git config (overrides devTools defaults)
+  programs.git.settings.user = {
+    name = "Alice";
+    email = "alice@example.com";
+  };
 
   home = {
     username = "alice";
     homeDirectory = "/home/alice";
     stateVersion = "24.05";
-
-    packages = with pkgs; [
-      ripgrep
-      fd
-      jq
-      htop
-      tree
-    ];
   };
 
   xdg.enable = true;

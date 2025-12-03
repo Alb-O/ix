@@ -16,16 +16,21 @@
     }:
     lib.nixosSystem {
       system = "x86_64-linux";
-      specialArgs = { inherit inputs imp; };
+      specialArgs = { inherit inputs imp registry; };
       modules = [
+        # Host-specific config
         (imp.filterNot (lib.hasInfix "/config/") registry.hosts.vm)
-        (imp registry.modules.nixos)
+
+        # Base NixOS settings
+        (import registry.modules.nixos.base)
+
+        # Home Manager
         inputs.home-manager.nixosModules.home-manager
         {
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = true;
-            extraSpecialArgs = { inherit inputs imp; };
+            extraSpecialArgs = { inherit inputs imp registry; };
             users.alice = import registry.users.alice;
           };
         }

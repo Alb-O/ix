@@ -1,3 +1,5 @@
+# Gaming feature
+# Steam, gamemode, and graphics support for gaming on NixOS
 { ... }:
 {
   programs.steam = {

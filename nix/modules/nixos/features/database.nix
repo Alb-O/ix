@@ -1,3 +1,5 @@
+# Database feature
+# PostgreSQL with sensible defaults
 { pkgs, ... }:
 {
   services.postgresql = {

@@ -1,3 +1,4 @@
+# Dev tools feature - neovim editor
 { pkgs, ... }:
 {
   enable = true;

@@ -86,11 +86,11 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1764727759,
-        "narHash": "sha256-qMVQ+Ij1GD1byjMl7GY/33WqWrt/7D5oY+TEg4X8FRE=",
+        "lastModified": 1764730216,
+        "narHash": "sha256-meLy0sZYM8wSbz2kUjxMDZb9JKK+u4SanPlQYOIuT/c=",
         "owner": "Alb-O",
         "repo": "imp",
-        "rev": "454a5351cdf75f7e926658578970febf749c90de",
+        "rev": "a3ea29ee7fbb3d320e532104d20fed8f260db6a2",
         "type": "github"
       },
       "original": {

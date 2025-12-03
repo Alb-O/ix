@@ -15,10 +15,9 @@
     }:
     inputs.home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
-      extraSpecialArgs = { inherit inputs; };
+      extraSpecialArgs = { inherit inputs imp registry; };
       modules = [
-        (imp registry.users.alice)
-        (imp registry.modules.home)
+        (import registry.users.alice)
       ];
     };
 }

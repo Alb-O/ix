@@ -1,3 +1,4 @@
+# Dev tools feature - delta diff viewer
 { ... }:
 {
   enable = true;
