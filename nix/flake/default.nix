@@ -10,6 +10,7 @@ let
     ;
   lib = nixpkgs.lib;
   impLib = imp.withLib lib;
+  registry = impLib.registry ./..;
 in
 flake-parts.lib.mkFlake { inherit inputs; } {
   systems = [
@@ -33,6 +34,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       imp = impLib;
     };
 
+    registry.src = ./..;
+
     flakeFile = {
       enable = true;
       coreInputs = import ./inputs.nix;
@@ -43,12 +46,12 @@ flake-parts.lib.mkFlake { inherit inputs; } {
 
   flake = {
     nixosModules = {
-      default = imp ../modules/nixos;
-      profiles = imp ../modules/profiles;
+      default = imp registry.modules.nixos;
+      profiles = imp registry.modules.profiles;
     };
 
     homeModules = {
-      default = imp ../modules/home;
+      default = imp registry.modules.home;
     };
 
     overlays.default = final: prev: {
