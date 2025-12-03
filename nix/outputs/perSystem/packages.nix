@@ -1,3 +1,4 @@
+# Custom packages
 { pkgs, ... }:
 {
   hello-ix = pkgs.writeShellScriptBin "hello-ix" ''

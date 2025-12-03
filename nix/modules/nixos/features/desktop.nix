@@ -5,6 +5,13 @@
   # Flatpak for sandboxed GUI apps
   services.flatpak.enable = true;
 
+  # XDG portals required for Flatpak
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    config.common.default = "*";
+  };
+
   # Font configuration
   fonts = {
     packages = with pkgs; [

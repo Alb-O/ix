@@ -1,3 +1,4 @@
+# Development shells
 { pkgs, ... }:
 {
   default = pkgs.mkShell {

@@ -1,4 +1,4 @@
-# Run with: nix run .#vm
+# VM NixOS configuration - run with: nix run .#vm
 {
   __inputs.home-manager = {
     url = "github:nix-community/home-manager";
@@ -8,8 +8,8 @@
   __functor =
     _:
     {
-      inputs,
       lib,
+      inputs,
       imp,
       registry,
       ...
@@ -18,16 +18,9 @@
       system = "x86_64-linux";
       specialArgs = { inherit inputs imp registry; };
       modules = [
-        # Host-specific config
         (imp.filterNot (lib.hasInfix "/config/") registry.hosts.vm)
-
-        # Base NixOS settings
         (import registry.modules.nixos.base)
-
-        # VM gets desktop for testing
         (import registry.modules.nixos.features.desktop)
-
-        # Home Manager
         inputs.home-manager.nixosModules.home-manager
         {
           home-manager = {

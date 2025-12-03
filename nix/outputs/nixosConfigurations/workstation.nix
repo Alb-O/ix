@@ -1,3 +1,4 @@
+# Workstation NixOS configuration
 {
   __inputs.home-manager = {
     url = "github:nix-community/home-manager";
@@ -7,8 +8,8 @@
   __functor =
     _:
     {
-      inputs,
       lib,
+      inputs,
       imp,
       registry,
       ...
@@ -17,20 +18,11 @@
       system = "x86_64-linux";
       specialArgs = { inherit inputs imp registry; };
       modules = [
-        # Host-specific config
         (imp.filterNot (lib.hasInfix "/config/") registry.hosts.workstation)
-
-        # Base NixOS settings
         (import registry.modules.nixos.base)
-
-        # Desktop features
         (import registry.modules.nixos.features.desktop)
         (import registry.modules.nixos.features.gaming)
-
-        # Security
         (import registry.modules.nixos.features.hardening)
-
-        # Home Manager
         inputs.home-manager.nixosModules.home-manager
         {
           home-manager = {

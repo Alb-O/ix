@@ -1,3 +1,4 @@
+# Flake checks
 {
   __inputs.treefmt-nix.url = "github:numtide/treefmt-nix";
 
@@ -9,13 +10,12 @@
       inputs,
       ...
     }:
-    let
-      treefmtEval = inputs.treefmt-nix.lib.evalModule pkgs {
-        projectRootFile = "flake.nix";
-        programs.nixfmt.enable = true;
-      };
-    in
     {
-      formatting = treefmtEval.config.build.check self;
+      formatting =
+        (inputs.treefmt-nix.lib.evalModule pkgs {
+          projectRootFile = "flake.nix";
+          programs.nixfmt.enable = true;
+        }).config.build.check
+          self;
     };
 }

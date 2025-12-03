@@ -1,62 +1,35 @@
-# Flake outputs entry point
-# This file is referenced by the auto-generated flake.nix
+/*
+  Flake outputs entry point
+  This file is referenced by the auto-generated flake.nix
+
+  imp auto-loads from outputs/ directory:
+    - outputs/systems.nix      -> systems
+    - outputs/perSystem/*.nix  -> perSystem.*
+    - outputs/*.nix            -> flake.*
+*/
 inputs:
 let
-  inherit (inputs)
-    self
-    nixpkgs
-    flake-parts
-    imp
-    ;
-  lib = nixpkgs.lib;
-  impLib = imp.withLib lib;
-  registry = impLib.registry ./..;
+  inherit (inputs) nixpkgs flake-parts imp;
 in
 flake-parts.lib.mkFlake { inherit inputs; } {
-  systems = [
-    "x86_64-linux"
-    "aarch64-linux"
-    "x86_64-darwin"
-    "aarch64-darwin"
-  ];
-
   imports = [ imp.flakeModules.default ];
 
+  # imp configuration - directory structure defines the flake
   imp = {
     src = ../outputs;
-    args = {
-      inherit
-        self
-        inputs
-        lib
-        nixpkgs
-        ;
-      imp = impLib;
-    };
 
+    # Extra args available in all output files
+    args.nixpkgs = nixpkgs;
+
+    # Registry: reference modules by name instead of path
     registry.src = ./..;
 
+    # Auto-generate flake.nix from __inputs declarations
     flakeFile = {
       enable = true;
       coreInputs = import ./inputs.nix;
       description = "NixOS + Home Manager configuration using imp";
       outputsFile = "./nix/flake";
-    };
-  };
-
-  flake = {
-    nixosModules = {
-      base = import registry.modules.nixos.base;
-      features = imp registry.modules.nixos.features;
-    };
-
-    homeModules = {
-      base = import registry.modules.home.base;
-      features = imp registry.modules.home.features;
-    };
-
-    overlays.default = final: prev: {
-      ix = self.packages.${prev.system} or { };
     };
   };
 }
