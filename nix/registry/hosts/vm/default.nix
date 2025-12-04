@@ -3,12 +3,11 @@
   imp,
   inputs,
   registry,
-  modulesPath,
   ...
 }:
 {
   imports = [
-    (modulesPath + "/virtualisation/qemu-vm.nix")
+    ./hardware.nix
     (imp.configTree ./config)
     inputs.home-manager.nixosModules.home-manager
   ];
@@ -18,29 +17,6 @@
     useUserPackages = true;
     extraSpecialArgs = { inherit inputs imp registry; };
     users.alice = import registry.users.alice;
-  };
-
-  virtualisation = {
-    memorySize = 4096;
-    cores = 2;
-    graphics = true;
-    qemu.options = [
-      "-vga virtio"
-      "-display gtk,zoom-to-fit=on"
-    ];
-    forwardPorts = [
-      {
-        from = "host";
-        host.port = 2222;
-        guest.port = 22;
-      }
-    ];
-    sharedDirectories = {
-      config = {
-        source = "$HOME/flakes/ixample";
-        target = "/mnt/config";
-      };
-    };
   };
 
   environment.etc."motd".text = ''
