@@ -1,45 +1,38 @@
-# Ixample
+# ixample
 
-Demonstration NixOS configurations using [imp](https://github.com/imp-nix/imp.lib).
+A reference NixOS/Home Manager configuration demonstrating [imp](https://github.com/imp-nix/imp.lib) patterns.
 
-This repository showcases patterns for organizing NixOS and Home Manager configurations with imp's directory-based imports, module registries, and automatic input collection.
-
-## Directory Structure
+## Structure
 
 ```
 nix/
-├── flake/                  # Flake configuration
-│   ├── default.nix         # flake-parts entry point
-│   └── inputs.nix          # Core flake inputs
-├── outputs/                # Flake outputs (auto-loaded by imp)
-│   ├── homeConfigurations/ # Home Manager configurations
-│   ├── nixosConfigurations/# NixOS system configurations
-│   ├── perSystem/          # Per-system outputs (packages, devShells, etc.)
-│   ├── homeModules.nix     # Exported home-manager modules
-│   ├── nixosModules.nix    # Exported NixOS modules
-│   └── systems.nix         # Supported systems list
-└── registry/               # Named module registry
-    ├── hosts/              # Host-specific configurations
-    │   ├── server/
-    │   ├── vm/
-    │   └── workstation/
-    ├── modules/            # Reusable feature modules
-    │   ├── home/           # Home Manager modules
-    │   │   └── features/   # Composable features (shell, devTools, etc.)
-    │   └── nixos/          # NixOS modules
-    │       └── features/   # System features (desktop, gaming, etc.)
-    └── users/              # User configurations
-        └── alice/
+  flake/                    # Flake entry point
+    default.nix
+    inputs.nix
+  outputs/                  # Auto-loaded by imp
+    homeConfigurations/
+    nixosConfigurations/
+    perSystem/
+  registry/                 # Named module registry
+    hosts/                  # Host-specific configs
+      server/
+      vm/
+      workstation/
+    modules/                # Reusable features
+      home/features/
+      nixos/features/
+    users/
+      alice/
 ```
 
-## Key Patterns
+## Patterns
 
-### 1. Registry-Based Module References
+### Registry references
 
-Instead of relative paths, reference modules by name:
+Modules reference each other by name, not path:
 
 ```nix
-# In registry/users/alice/default.nix
+# registry/users/alice/default.nix
 { registry, imp, ... }:
 {
   imports = imp.imports [
@@ -49,84 +42,58 @@ Instead of relative paths, reference modules by name:
 }
 ```
 
-The registry maps directory structure to attribute paths:
+imp converts the directory path to an attribute path: `registry/modules/home/features/devShell/` becomes `registry.modules.home.features.devShell`.
 
-- `registry/modules/home/features/devShell/` → `registry.modules.home.features.devShell`
+### Config trees
 
-### 2. Config Trees
-
-Split NixOS/Home Manager configuration across multiple files:
+Split configuration across files whose paths mirror option paths:
 
 ```nix
-# In registry/hosts/workstation/default.nix
+# registry/hosts/workstation/default.nix
 { imp, ... }:
 {
-  imports = [
-    (imp.configTree ./config)  # Loads all .nix files from ./config
-  ];
+  imports = [ (imp.configTree ./config) ];
 }
 ```
 
-Directory structure becomes option paths:
+The file `config/networking/hostName.nix` sets `networking.hostName`. The file `config/services/openssh.nix` sets `services.openssh.*`.
 
-- `config/networking/hostName.nix` → sets `networking.hostName`
-- `config/services/openssh.nix` → sets `services.openssh.*`
-
-### 3. Merged Config Trees
+### Merged config trees
 
 Compose features by merging multiple config trees:
 
 ```nix
-# In registry/modules/home/features/devShell/default.nix
+# registry/modules/home/features/devShell/default.nix
 { imp, registry, ... }:
 {
   imports = [
     (imp.mergeConfigTrees { strategy = "merge"; } [
       registry.modules.home.features.shell
       registry.modules.home.features.devTools
-      ./.  # Local overrides
+      ./.
     ])
   ];
 }
 ```
 
-The `merge` strategy concatenates list options (like shell aliases) rather than replacing them.
+The `merge` strategy uses the NixOS module system to combine definitions: lists concatenate, attrsets merge recursively.
 
-### 4. Auto-Generated flake.nix
+### Auto-generated flake.nix
 
-The `flake.nix` is generated from `__inputs` declarations scattered throughout the codebase:
+Inputs declared inline with `__inputs` are collected and merged into `flake.nix`:
 
 ```nix
-# In outputs/perSystem/formatter.nix
+# outputs/perSystem/formatter.nix
 __inputs = {
   treefmt-nix.url = "github:numtide/treefmt-nix";
 };
 ```
 
-Regenerate with:
+Regenerate with `nix run .#imp-flake`.
 
-```bash
-nix run .#imp-flake
-```
+## Host configuration
 
-### 5. Directory-Based Outputs
-
-imp auto-loads outputs from the `outputs/` directory:
-
-| File/Directory                      | Becomes                       |
-| ----------------------------------- | ----------------------------- |
-| `outputs/systems.nix`               | `systems`                     |
-| `outputs/perSystem/*.nix`           | `perSystem.*`                 |
-| `outputs/nixosModules.nix`          | `flake.nixosModules`          |
-| `outputs/nixosConfigurations/*.nix` | `flake.nixosConfigurations.*` |
-
-## Host Configuration Example
-
-Each host has:
-
-- `default.nix` - Main configuration
-- `hardware.nix` - Hardware-specific settings
-- `config/` - Option settings organized by path
+Each host has a `default.nix`, `hardware.nix`, and a `config/` tree:
 
 ```nix
 # registry/hosts/workstation/default.nix
@@ -149,9 +116,9 @@ Each host has:
 }
 ```
 
-## Feature Module Example
+## Feature modules
 
-Features are self-contained modules that can be composed:
+Each feature is a config tree that can be imported independently:
 
 ```nix
 # registry/modules/home/features/shell/default.nix
@@ -161,38 +128,19 @@ Features are self-contained modules that can be composed:
 }
 ```
 
-With config files:
-
-- `programs/zsh.nix` - Zsh configuration
-- `programs/starship.nix` - Prompt customization
-- `programs/fzf.nix` - Fuzzy finder
-
-## Getting Started
-
-1. Clone this repository as a template
-2. Modify `registry/hosts/` for your machines
-3. Customize `registry/users/` for your users
-4. Add features to `registry/modules/`
-5. Run `nix run .#imp-flake` to regenerate `flake.nix`
+With config files at `programs/zsh.nix`, `programs/starship.nix`, etc.
 
 ## Commands
 
 ```bash
-# Build a NixOS configuration
 nix build .#nixosConfigurations.workstation.config.system.build.toplevel
-
-# Enter development shell
 nix develop
-
-# Format code
 nix fmt
-
-# Regenerate flake.nix from __inputs
 nix run .#imp-flake
 ```
 
-## Learn More
+## Documentation
 
-- [imp documentation](https://imp-nix.github.io/imp.lib/)
-- [Registry pattern guide](https://imp-nix.github.io/imp.lib/concepts/registry.html)
-- [Config tree guide](https://imp-nix.github.io/imp.lib/guides/config-trees.html)
+- [imp docs](https://imp-nix.github.io/imp.lib/)
+- [Registry](https://imp-nix.github.io/imp.lib/concepts/registry.html)
+- [Config trees](https://imp-nix.github.io/imp.lib/guides/config-trees.html)
