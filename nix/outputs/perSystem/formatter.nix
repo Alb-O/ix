@@ -1,12 +1,12 @@
-# Formatter using treefmt-nix
+# Formatter using imp.formatterLib
 {
   __inputs.treefmt-nix.url = "github:numtide/treefmt-nix";
 
   __functor =
     _:
     { pkgs, inputs, ... }:
-    (inputs.treefmt-nix.lib.evalModule pkgs {
-      projectRootFile = "flake.nix";
-      programs.nixfmt.enable = true;
-    }).config.build.wrapper;
+    inputs.imp.formatterLib.make {
+      inherit pkgs;
+      treefmt-nix = inputs.treefmt-nix;
+    };
 }
