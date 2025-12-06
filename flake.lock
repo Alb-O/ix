@@ -152,11 +152,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1765011609,
-        "narHash": "sha256-zxBd44p8Kfo3MJkN5fZfzBy8nzz9PEapSo4Y+kxg4Fw=",
+        "lastModified": 1765012744,
+        "narHash": "sha256-Q+dFXzC9DC5f2AF83o5QDck9vOOs8bq+I2vGV9FSwRw=",
         "owner": "imp-nix",
         "repo": "imp.lib",
-        "rev": "45954f0d7a1aa8f24fb2e70919f1bec4ac8b495b",
+        "rev": "a09bdee10655d780da0953d0fe90255754059074",
         "type": "github"
       },
       "original": {
